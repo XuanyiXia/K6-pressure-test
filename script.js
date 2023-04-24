@@ -1,39 +1,39 @@
 import http from 'k6/http';
-import { group, sleep } from 'k6';
-import { Trend, Rate, Counter, Gauge } from 'k6/metrics';
-import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
+import { check, sleep } from 'k6';
+import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/2.4.0/dist/bundle.js";
 import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.1/index.js";
-import publicCrocodiles from "./publicCrocodiles";
-const stages = (occurrence) => {
-    return [
-        { duration: stagesTotal[0].duration, target: Math.ceil(stagesTotal[0].target * occurrence) },
-        { duration: stagesTotal[1].duration, target: Math.ceil(stagesTotal[1].target * occurrence) },
-        { duration: stagesTotal[2].duration, target: Math.ceil(stagesTotal[2].target * occurrence) },
-        { duration: stagesTotal[3].duration, target: Math.ceil(stagesTotal[3].target * occurrence) },
-        { duration: stagesTotal[4].duration, target: Math.ceil(stagesTotal[4].target * occurrence) },
-        { duration: stagesTotal[5].duration, target: Math.ceil(stagesTotal[5].target * occurrence) },
-    ];
-};
+
 export const options = {
-    scenarios:{
-        public_coco: {
-            executor:"ramping-vus",
-            startVUs: 0,
-            stages: stages(0.01),
-            gracefulRampDown: "0s",
-            exec: "scenarioVU1",
-        }
-    }
+    vus: 10,
+    duration: '30s',
 };
-const scenarioWithSleep = (scenario) => {
-    scenario();
+
+// export const options = {
+//     stages: [
+//         { duration: '30s', target: 20 },
+//         { duration: '1m30s', target: 10 },
+//         { duration: '20s', target: 0 },
+//     ],
+// };
+
+export default function () {
+    const res = http.get('http://localhost:9000/order-payments/hello');
+    check(res, { 'status was 200': (r) => r.status === 200 });
     sleep(1);
-};
 
-export default function public_coco() {
-    publicCrocodiles();
+    const url = 'http://localhost:9000/order-payments/hello';
+    const payload = JSON.stringify({
+    });
+
+    const params = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization' : 'Bearer xxx'
+        },
+    };
+
+    http.post(url, payload, params);
 }
-
 
 export function handleSummary(data) {
     return {
