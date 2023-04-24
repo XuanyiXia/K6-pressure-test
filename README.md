@@ -46,4 +46,4 @@ check: 阈值，用于判断是否通过测试
 
 添加了组件textSummary，可以转为html进行输出，代码中的输出目录不是项目根目录，而是本机的根目录，可自行修改。
 
-![img_2.png](img_2.png)
+![img_1.png](img_1.png)
